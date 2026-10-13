@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NutriResilience AI – Prototype</title>
+<style>
+:root{--bg:#f5f1e6;--card:#ffffff;--ink:#1c2b22;--mute:#5d6b62;--g:#123524;--g2:#2e7d5b;--ac:#e0922f;--line:#ddd6c3;--warn:#fbe3d6;--warnink:#7a2e10;--onacc:#123524;--onG:#f5f1e6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a14;--card:#182720;--ink:#ece8dc;--mute:#a3b0a7;--g:#8fd1ae;--g2:#5fb58a;--ac:#e8a24a;--line:#2b3d33;--warn:#4a2418;--warnink:#ffd9c7;--onG:#0f1a14}}
+:root[data-theme="dark"]{--bg:#0f1a14;--card:#182720;--ink:#ece8dc;--mute:#a3b0a7;--g:#8fd1ae;--g2:#5fb58a;--ac:#e8a24a;--line:#2b3d33;--warn:#4a2418;--warnink:#ffd9c7;--onG:#0f1a14}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.45}
+#app{max-width:480px;margin:0 auto;padding:20px 16px 110px}
+h1,h2{font-family:Georgia,serif;color:var(--g);margin:0 0 6px;line-height:1.15}
+h1{font-size:30px}h2{font-size:24px}h3{margin:0 0 6px;font-size:18px;color:var(--g)}
+p{margin:0 0 10px}.mute{color:var(--mute);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 14px}
+.btn{background:var(--g);color:var(--onG);border:0;border-radius:12px;padding:13px 18px;font-size:17px;font-weight:700;cursor:pointer;min-height:48px}
+.btn.alt{background:transparent;color:var(--g);border:2px solid var(--g)}
+.btn.full{width:100%}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 12px;font-size:14px;cursor:pointer}
+.chip.on{background:var(--ac);color:var(--onacc);border-color:var(--ac);font-weight:700}
+.moods{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
+.mood{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:8px 2px;text-align:center;font-size:12px;cursor:pointer;min-height:64px}
+.mood b{display:block;font-size:24px}.mood.on{border-color:var(--g2);background:var(--bg)}
+label{display:block;font-weight:700;margin:12px 0 4px;font-size:15px}
+input,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:17px}
+.warn{background:var(--warn);color:var(--warnink);border-radius:16px;padding:16px;margin:0 0 14px}
+.warn a{color:var(--warnink);font-weight:700}
+.meal{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line)}.meal:first-of-type{border-top:0}
+.meal b{min-width:92px;color:var(--g2)}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav div{display:flex;width:100%;max-width:480px}
+nav button{flex:1;background:none;border:0;color:var(--mute);padding:10px 2px;font-size:12px;cursor:pointer;min-height:56px}
+nav button b{display:block;font-size:22px}nav button.on{color:var(--g);font-weight:700}
+.bar{display:flex;align-items:flex-end;gap:6px;height:70px;margin-top:8px}
+.bar i{flex:1;background:var(--g2);border-radius:4px 4px 0 0;min-height:6px}
+.circle{width:140px;height:140px;border-radius:50%;background:var(--g2);margin:14px auto;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;transition:transform 4s ease-in-out}
+.hero{background:var(--g);color:var(--onG);border-radius:20px;padding:22px;margin-bottom:14px}.hero h1{color:var(--onG)}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<nav><div id="tabs"></div></nav>
+
+<script>
+const T={
+en:{tagline:"Better nutrition and mental wellbeing for everyone",consentT:"Your consent",consentB:"This app gives general nutrition and wellbeing guidance. It does not replace a doctor, nurse or counsellor. In this prototype, your check-ins stay on your phone only.",agree:"I understand and agree",start:"Start",hello:"Welcome",tabs:["Home","Meals","Learn","Wellbeing","Help"],feel:"How are you feeling today?",moods:["Very low","Low","Okay","Good","Great"],harmQ:"Are you having thoughts of harming yourself?",yes:"Yes",no:"No",save:"Save check-in",saved:"Saved. Thank you for looking after yourself.",hist:"Recent check-ins",none:"No check-ins yet",mealT:"Meal planner",ppl:"People in household",bud:"Budget per day (KES)",grp:"Who is the plan for?",grps:{general:"Everyone",preg:"Pregnant or breastfeeding",teen:"Adolescent",old:"Older adult"},plan:"Make my plan",pp:"Per person per day",tier:{low:"Basic budget",mid:"Moderate budget",high:"Comfortable budget"},meals:["Breakfast","Lunch","Supper","Snack"],tierNote:"Illustrative tiers only. Prices differ by market and season.",learnT:"Nutrition tips",listen:"Listen",selfT:"Calm down exercise",breathe:"Start breathing",stop:"Stop",inh:"Breathe in",hold:"Hold",out:"Breathe out",helpT:"Help and referrals",helpB:"If you need support, contact:",facility:"Nearest health facility: [add county referral list]",verify:"Verify these numbers before launch.",disc:"Prototype for demonstration. Not medical advice.",low:"Low-data mode",lang:"Language",crisisT:"You are not alone",crisisB:"Please talk to someone you trust right now, or call for support below. If you are in immediate danger, call 999 or 112.",listenNA:"Audio is not available on this device.",tips:[["Mix colours on your plate","Add greens like sukuma wiki or managu to ugali or rice."],["Beans and grains together","Githeri is a cheap, filling source of protein and energy."],["Add vitamin C to iron foods","Squeeze lemon on greens or eat fruit after beans to help your body absorb iron."],["Drink safe water","Sip water through the day. Boil or treat it if you are unsure."],["Talk it out","Sharing a worry with someone you trust can lighten it."]]},
+sw:{tagline:"Lishe bora na afya ya akili kwa wote",consentT:"Idhini yako",consentB:"Programu hii inatoa mwongozo wa jumla wa lishe na ustawi. Si mbadala wa daktari, muuguzi au mshauri. Katika toleo hili la majaribio, taarifa zako za kila siku zinabaki kwenye simu yako tu.",agree:"Nimeelewa na ninakubali",start:"Anza",hello:"Karibu",tabs:["Nyumbani","Chakula","Jifunze","Ustawi","Msaada"],feel:"Unajisikiaje leo?",moods:["Vibaya sana","Vibaya","Sawa","Vizuri","Vizuri sana"],harmQ:"Je, una mawazo ya kujidhuru?",yes:"Ndiyo",no:"Hapana",save:"Hifadhi",saved:"Imehifadhiwa. Asante kwa kujali ustawi wako.",hist:"Hisia za hivi karibuni",none:"Bado hakuna",mealT:"Mpango wa chakula",ppl:"Watu nyumbani",bud:"Bajeti kwa siku (KES)",grp:"Mpango huu ni wa nani?",grps:{general:"Kila mtu",preg:"Mjamzito au anayenyonyesha",teen:"Kijana balehe",old:"Mzee"},plan:"Tengeneza mpango",pp:"Kwa mtu kwa siku",tier:{low:"Bajeti ndogo",mid:"Bajeti ya wastani",high:"Bajeti nzuri"},meals:["Kiamsha kinywa","Chakula cha mchana","Chakula cha jioni","Vitafunio"],tierNote:"Hii ni mifano tu. Bei hutofautiana kulingana na soko na msimu.",learnT:"Vidokezo vya lishe",listen:"Sikiliza",selfT:"Zoezi la kujituliza",breathe:"Anza kupumua",stop:"Simama",inh:"Vuta pumzi",hold:"Shikilia",out:"Toa pumzi",helpT:"Msaada na rufaa",helpB:"Ukihitaji msaada, wasiliana na:",facility:"Kituo cha afya cha karibu: [ongeza orodha ya kaunti]",verify:"Thibitisha namba hizi kabla ya kuzindua.",disc:"Mfano wa majaribio. Si ushauri wa kitabibu.",low:"Hali ya data ndogo",lang:"Lugha",crisisT:"Hauko peke yako",crisisB:"Tafadhali zungumza na mtu unayemwamini sasa hivi, au piga simu hapa chini. Ukiwa hatarini mara moja, piga 999 au 112.",listenNA:"Sauti haipatikani kwenye kifaa hiki.",tips:[["Changanya rangi kwenye sahani","Ongeza mboga za majani kama sukuma wiki au managu kwenye ugali au wali."],["Maharagwe na nafaka pamoja","Githeri ni chanzo cha bei nafuu cha protini na nguvu."],["Ongeza vitamini C kwa vyakula vyenye chuma","Kamulia limau kwenye mboga au kula tunda baada ya maharagwe ili mwili unyonye chuma."],["Kunywa maji safi","Kunywa maji siku nzima. Yachemshe au yatibu usipokuwa na uhakika."],["Zungumza na mtu","Kumweleza mtu unayemwamini wasiwasi wako kunaweza kupunguza mzigo."]]}};
+const PLANS={
+low:[["Uji (porridge) and boiled sweet potato or arrowroot","Githeri, or ugali with sukuma wiki","Ugali with beans or omena and greens","Seasonal fruit if available"]],
+mid:[["Uji or chapati with an egg or milk tea","Rice or ugali with beans and cabbage","Ugali with omena, fish or eggs, plus managu or spinach","Banana or avocado"]],
+high:[["Eggs, bread or sweet potato, and fruit","Rice or ugali with ndengu (green grams) or beans and greens","Ugali with fish, chicken or meat, plus managu or spinach","Groundnuts and milk"]]};
+const NOTES={general:"Aim for a starch, a protein (beans, eggs, fish) and greens at main meals.",
+preg:"Extra iron, folate and fluids help. Choose greens, beans and eggs often, and attend antenatal or postnatal clinic for supplements and advice.",
+teen:"Do not skip breakfast. Iron-rich foods like greens, beans and omena support growth and concentration.",
+old:"Choose soft, easy-to-chew foods, eat small meals more often, include protein, and drink water regularly."};
+const S={tab:0,lang:'en',low:false,consent:false,mood:null,harm:null,saved:false,plan:null,breathing:null};
+let LOG=[];
+try{const x=localStorage.getItem('nr_log');if(x)LOG=JSON.parse(x);S.consent=localStorage.getItem('nr_consent')==='1'}catch(e){}
+const t=()=>T[S.lang];
+const $=s=>document.querySelector(s);
+const em=e=>S.low?'':e;
+function persist(){try{localStorage.setItem('nr_log',JSON.stringify(LOG.slice(-30)))}catch(e){}}
+function crisis(){const r=LOG.slice(-3);return S.harm==='y'||(r.length===3&&r.every(m=>m.m<=1))}
+function crisisCard(){const x=t();return `<div class="warn"><h3 style="color:inherit">${x.crisisT}</h3><p>${x.crisisB}</p>${helplines()}</div>`}
+function helplines(){return `<p><a href="tel:1199">Kenya Red Cross: 1199</a><br><a href="tel:+254722178177">Befrienders Kenya: +254 722 178 177</a><br><a href="tel:999">Emergency: 999 / 112</a></p>`}
+function home(){const x=t();
+const mo=x.moods.map((l,i)=>`<button class="mood ${S.mood===i?'on':''}" onclick="S.mood=${i};S.saved=false;draw()"><b>${S.low?i+1:['😞','😕','😐','🙂','😄'][i]}</b>${l}</button>`).join('');
+const last=LOG.slice(-7);
+const hist=last.length?`<div class="bar">${last.map(m=>`<i style="height:${(m.m+1)*20}%"></i>`).join('')}</div>`:`<p class="mute">${x.none}</p>`;
+return `<div class="hero"><h1>${em('🥗 ')}NutriResilience AI</h1><p>${x.tagline}</p></div>
+<div class="card"><h2>${x.feel}</h2><div class="moods">${mo}</div>
+<label>${x.harmQ}</label><div class="row"><button class="chip ${S.harm==='y'?'on':''}" onclick="S.harm='y';draw()">${x.yes}</button><button class="chip ${S.harm==='n'?'on':''}" onclick="S.harm='n';draw()">${x.no}</button></div>
+<p></p><button class="btn full" onclick="saveMood()" ${S.mood===null||!S.harm?'disabled style="opacity:.5"':''}>${x.save}</button>
+${S.saved?`<p style="margin-top:10px">${x.saved}</p>`:''}</div>
+${S.saved&&crisis()?crisisCard():''}
+<div class="card"><h3>${x.hist}</h3>${hist}</div>`}
+function saveMood(){LOG.push({m:S.mood,d:new Date().toISOString().slice(0,10)});persist();S.saved=true;draw()}
+function meals(){const x=t(),p=S.plan;let out='';
+if(p){const tier=p.pp<100?'low':p.pp<200?'mid':'high',pl=PLANS[tier][0];
+out=`<div class="card"><h3>${x.tier[tier]} · ${x.pp}: KES ${p.pp}</h3>${pl.map((f,i)=>`<div class="meal"><b>${x.meals[i]}</b><span>${f}</span></div>`).join('')}<p class="mute" style="margin-top:10px">${NOTES[p.g]}</p><p class="mute">${x.tierNote}</p></div>`}
+return `<h2>${x.mealT}</h2><div class="card"><label>${x.ppl}</label><input id="n" type="number" min="1" max="12" value="${p?p.n:4}">
+<label>${x.bud}</label><input id="b" type="number" min="20" step="10" value="${p?p.b:400}">
+<label>${x.grp}</label><select id="g">${Object.entries(x.grps).map(([k,v])=>`<option value="${k}" ${p&&p.g===k?'selected':''}>${v}</option>`).join('')}</select>
+<p></p><button class="btn full" onclick="makePlan()">${x.plan}</button></div>${out}`}
+function makePlan(){const n=Math.max(1,+$('#n').value||1),b=Math.max(0,+$('#b').value\vert{}\vert{}0);S.plan={n,b,g:$('#g').value,pp:Math.round(b/n)};draw()}
+function learn(){const x=t();return `<h2>${x.learnT}</h2>`+x.tips.map((tp,i)=>`<div class="card"><h3>${tp[0]}</h3><p>${tp[1]}</p><button class="chip" onclick="speak(${i})">${em('🔊 ')}${x.listen}</button></div>`).join('')}
+function speak(i){const x=t();try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(x.tips[i][0]+'. '+x.tips[i][1]);u.lang=S.lang==='sw'?'sw-KE':'en-KE';speechSynthesis.speak(u)}catch(e){alert(x.listenNA)}}
+let tm=null;
+function well(){const x=t();return `<h2>${x.selfT}</h2><div class="card" style="text-align:center"><div class="circle" id="c"><span id="ct">${em('🌿')}</span></div>
+<button class="btn" onclick="breathe()">${S.breathing?x.stop:x.breathe}</button></div>
+<div class="card"><h3>${x.tips[4][0]}</h3><p>${x.tips[4][1]}</p></div>`}
+function breathe(){const x=t();if(S.breathing){clearInterval(tm);S.breathing=null;draw();return}S.breathing=1;draw();let k=0;const ph=[[x.inh,1.4],[x.hold,1.4],[x.out,1],[x.hold,1]];
+const step=()=>{const c=$('#c'),ct=$('#ct');if(!c){clearInterval(tm);S.breathing=null;return}const p=ph[k%4];ct.textContent=p[0];if(!S.low)c.style.transform=`scale(${p[1]})`;k++};step();tm=setInterval(step,4000)}
+function help(){const x=t();return `<h2>${x.helpT}</h2><div class="card"><p>${x.helpB}</p>${helplines()}<p class="mute">${x.verify}</p></div><div class="card"><p>${x.facility}</p></div>
+<div class="card"><h3>${x.lang}</h3><div class="row"><button class="chip ${S.lang==='en'?'on':''}" onclick="setL('en')">English</button><button class="chip ${S.lang==='sw'?'on':''}" onclick="setL('sw')">Kiswahili</button></div>
+<h3 style="margin-top:14px">${x.low}</h3><div class="row"><button class="chip ${S.low?'on':''}" onclick="S.low=!S.low;draw()">${S.low?'ON':'OFF'}</button></div></div><p class="mute">${x.disc}</p>`}
+function setL(l){S.lang=l;document.documentElement.lang=l;draw()}
+function gate(){const x=t();return `<div class="hero"><h1>${em('🥗 ')}NutriResilience AI</h1><p>${x.tagline}</p></div><div class="card"><h2>${x.consentT}</h2><p>${x.consentB}</p>
+<div class="row" style="margin-bottom:12px"><button class="chip ${S.lang==='en'?'on':''}" onclick="setL('en')">English</button><button class="chip ${S.lang==='sw'?'on':''}" onclick="setL('sw')">Kiswahili</button></div>
+<button class="btn full" onclick="S.consent=true;try{localStorage.setItem('nr_consent','1')}catch(e){};draw()">${x.agree}</button></div>`}
+function draw(){const x=t();
+if(!S.consent){$('#app').innerHTML=gate();$('#tabs').innerHTML='';return}
+$('#app').innerHTML=[home,meals,learn,well,help][S.tab]();
+const ic=['🏠','🍲','📖','🌿','☎️'];
+$('#tabs').innerHTML=x.tabs.map((n,i)=>`<button class="${S.tab===i?'on':''}" onclick="S.tab=${i};if(S.breathing){clearInterval(tm);S.breathing=null}draw();scrollTo(0,0)"><b>${S.low?'':ic[i]}</b>${n}</button>`).join('')}
+draw();
+</script>
+
+</body>
+</html>
